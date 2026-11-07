@@ -1,15 +1,17 @@
 zerops:
   - setup: xui
     run:
-      base: docker@latest
+      base: alpine/docker@26.1.5
+      # Download and cache the 3x-ui Docker image during build/prepare
+      prepareCommands:
+        - docker image pull bigbugcc/3x-ui:v2.4.5
+      # Start container with host network mode and persistent volumes
+      start: docker run --rm --name 3x-ui --network=host -v xui_db:/etc/x-ui -v xui_cert:/root/cert -e XRAY_VMESS_AEAD_FORCED=false -e TZ=UTC bigbugcc/3x-ui:v2.4.5
+      # Declare ports exposed by your application
       ports:
         - port: 2053
           protocol: TCP
-          httpSupport: true    # Tells Zerops this port handles web traffic for the panel
+          httpSupport: true    # Panel web interface
         - port: 8443
           protocol: TCP
           httpSupport: false   # Client traffic (VLESS/VMess/Trojan)
-      envVariables:
-        XRAY_VMESS_AEAD_FORCED: "false"
-        TZ: "UTC"
-      start: docker run --rm --name 3x-ui -p 2053:2053 -p 8443:8443 -v xui_db:/etc/x-ui -v xui_cert:/root/cert -e XRAY_VMESS_AEAD_FORCED=false -e TZ=UTC bigbugcc/3x-ui:v2.4.5
