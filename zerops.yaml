@@ -1,10 +1,15 @@
 zerops:
   - setup: xui
-    build:
-      # Zerops build phase runs in standard containers, so base cannot be docker
-      base: ubuntu@24.04
-      deployFiles: ./docker-compose.yaml
-      addToRunPrepare: ./docker-compose.yaml
     run:
       base: docker@latest
-      start: docker compose up --force-recreate
+      ports:
+        - port: 2053
+          protocol: TCP
+          httpSupport: true    # Tells Zerops this port handles web traffic for the panel
+        - port: 8443
+          protocol: TCP
+          httpSupport: false   # Client traffic (VLESS/VMess/Trojan)
+      envVariables:
+        XRAY_VMESS_AEAD_FORCED: "false"
+        TZ: "UTC"
+      start: docker run --rm --name 3x-ui -p 2053:2053 -p 8443:8443 -v xui_db:/etc/x-ui -v xui_cert:/root/cert -e XRAY_VMESS_AEAD_FORCED=false -e TZ=UTC bigbugcc/3x-ui:v2.4.5
