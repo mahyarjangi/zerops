@@ -1,11 +1,10 @@
 zerops:
-  - setup: docker
+  - setup: xui
     build:
-      base: docker
-      buildCommands:
-        - docker pull bigbugcc/3x-ui:v3.11.0
-    deploy:
-      readinessCheck:
-        httpGet:
-          port: 2053
-          path: /
+      # Zerops build phase runs in standard containers, so base cannot be docker
+      base: ubuntu@24.04
+      deployFiles: ./docker-compose.yaml
+      addToRunPrepare: ./docker-compose.yaml
+    run:
+      base: docker@latest
+      start: docker compose up --force-recreate
