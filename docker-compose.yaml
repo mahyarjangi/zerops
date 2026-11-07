@@ -1,14 +1,15 @@
 zerops:
-  - setup: arad
+  - setup: docker
     run:
       base: alpine/docker@26.1.5
+      # download and cache docker image
       prepareCommands:
-        - docker image pull bigbugcc/3x-ui:latest
-      start: docker run --rm --name 3x-ui --network=host -v xui_db:/etc/x-ui -v xui_cert:/root/cert -e XRAY_VMESS_AEAD_FORCED=false -e TZ=UTC bigbugcc/3x-ui:latest
+        - docker image pull crccheck/hello-world
+      # start docker, --network=host needed
+      start: docker run --network=host crccheck/hello-world
+
+      # what ports docker exposes
+      # and whether it supports http traffic
       ports:
-        - port: 2053
-          protocol: TCP
+        - port: 8000
           httpSupport: true
-        - port: 8443
-          protocol: TCP
-          httpSupport: false
