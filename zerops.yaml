@@ -1,17 +1,11 @@
-
 zerops:
-  - setup: arad
+  - setup: docker
     build:
       base: docker
-      dockerfile: Dockerfile
-
+      buildCommands:
+        - docker pull bigbugcc/3x-ui:v3.11.0
     deploy:
       readinessCheck:
         httpGet:
           port: 2053
           path: /
-      ports:
-        - port: 2053
-          httpSupport: true
-        - port: 8443
-          httpSupport: false
