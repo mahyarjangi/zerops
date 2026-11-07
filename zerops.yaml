@@ -1,17 +1,48 @@
 zerops:
-  - setup: xui
+  # supports monorepositories, just add
+  # one setup section after the other
+  - setup: ubuntu2
+    # ==== how to build your application ====
+    build:
+      # select what technology should the
+      # build container be based on, can
+      # be different from service technology
+      # see docs for full list
+      base: ubuntu@26.04
+
+      # *optional* add additional dependencies
+      # on top of base technology (combination
+      # will be cached for next build)
+      # prepareCommands:
+      #   - apt-get something
+
+      # build your application
+      buildCommands:
+        - echo 'while true; do echo "running"; sleep 15; done' > run.sh
+        - chmod +x run.sh
+
+      # select which files / folders to deploy
+      # after the build successfully finished
+      deployFiles:
+        - run.sh
+
+      # *optional*: which files / folders
+      # to cache for the next use
+      # cache:
+
+    # ==== how to run your application ====
     run:
-      base: alpine/docker@26.1.5
-      # Download and cache the 3x-ui Docker image during build/prepare
-      prepareCommands:
-        - docker image pull bigbugcc/3x-ui:v2.4.5
-      # Start container with host network mode and persistent volumes
-      start: docker run --rm --name 3x-ui --network=host -v xui_db:/etc/x-ui -v xui_cert:/root/cert -e XRAY_VMESS_AEAD_FORCED=false -e TZ=UTC bigbugcc/3x-ui:v2.4.5
-      # Declare ports exposed by your application
-      ports:
-        - port: 2053
-          protocol: TCP
-          httpSupport: true    # Panel web interface
-        - port: 8443
-          protocol: TCP
-          httpSupport: false   # Client traffic (VLESS/VMess/Trojan)
+      base: ubuntu@26.04
+
+      # *optional* install dependencies that your
+      # runtime service requires (will be cached)
+      # prepareCommands:
+      #   - apt-get something
+
+      # *optional*: triggered before each start/restart
+      # of your application, to eg. clean cache
+      # initCommands:
+      #  - rm -rf ./cache
+
+      # how to start your application
+      start: ./run.sh
