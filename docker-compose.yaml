@@ -1,5 +1,5 @@
 zerops:
-  - setup: docker    # <--- Change this to match your exact Zerops service name
+  - setup: docker
     run:
       base: alpine/docker@26.1.5
       prepareCommands:
