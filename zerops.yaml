@@ -1,0 +1,17 @@
+
+zerops:
+  - setup: arad
+    build:
+      base: docker
+      dockerfile: Dockerfile
+
+    deploy:
+      readinessCheck:
+        httpGet:
+          port: 2053
+          path: /
+      ports:
+        - port: 2053
+          httpSupport: true
+        - port: 8443
+          httpSupport: false
